@@ -42,7 +42,7 @@ def reply(bot, update, job_queue):
         if not isinstance(res, str):
             res = str(res)
         res = json.loads(res)
-        msg = update.message.reply_text(res.Result, quote=True)
+        msg = update.message.reply_text(res['Result'], quote=True)
         if pattern_2fa.match(command):
             job_queue.run_once(mfa_timeout, 15, context=(chat_id, msg.message_id))
     else:
