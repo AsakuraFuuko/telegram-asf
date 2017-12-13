@@ -2,13 +2,14 @@
 
 token = '123456789:XXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXX'
 admin = '987654321'
-ipc = 'http://127.0.0.1:1242/IPC?command='
+ipc = 'http://127.0.0.1:1242/Api/Command/'
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Job
 import urllib.parse as parse, urllib.request as request, urllib.error
 import logging
 import re
 import sys
+import json
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -40,7 +41,8 @@ def reply(bot, update, job_queue):
         res = asf_ipc(command)
         if not isinstance(res, str):
             res = str(res)
-        msg = update.message.reply_text(res, quote=True)
+        res = json.loads(res)
+        msg = update.message.reply_text(res.Result, quote=True)
         if pattern_2fa.match(command):
             job_queue.run_once(mfa_timeout, 15, context=(chat_id, msg.message_id))
     else:
